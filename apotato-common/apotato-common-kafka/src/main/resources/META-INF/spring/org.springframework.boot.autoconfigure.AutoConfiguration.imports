@@ -1,0 +1,2 @@
+org.springframework.kafka.core.KafkaTemplate
+cn.apotato.common.kafka.producer.KafkaProducer
