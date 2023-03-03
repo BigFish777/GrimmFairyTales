@@ -10,6 +10,9 @@
 ```
 
 ### 🎁kafka配置文件
+
+**Properties版本**
+
 ```properties
 # kafka集群地址
 spring.kafka.bootstrap-servers=112.126.74.249:9092,112.126.74.249:9093
@@ -65,8 +68,102 @@ spring.kafka.numPartitions=10
 # 创建topic的副本数
 spring.kafka.replicationFactor=2
 ```
+**YML版本**
+
+```yaml
+spring:
+  kafka:
+    #kafka集群地址
+    bootstrap-servers: apotato.cn:9093
+    #kafka自定义扩展
+    #创建topic的分区数
+    numPartitions: 8
+    #创建topic的副本数
+    replicationFactor: 1
+    #自动创建topic所需要的topic名称集合
+    topics: test1,test2
+    #初始化消费者配置
+    consumer:
+      #当kafka中没有初始offset或offset超出范围时将自动重置offset
+      # earliest:重置为分区中最小的offset;
+      # latest:重置为分区中最新的offset(消费分区中新产生的数据);
+      # none:只要有一个分区不存在已提交的offset,就抛出异常;
+      auto-offset-reset: latest
+      #是否自动提交offset
+      enable-auto-commit: true
+      #ky序列化
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        #默认的消费组ID
+        group:
+          id: testGroup
+        #消费请求超时时间
+        request:
+          timeout:
+            ms: 180000
+        #消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        session:
+          timeout:
+            ms: 120000
+      #提交offset延时(接收到消息后多久提交offset)
+      auto:
+        commit:
+          interval:
+            ms: 1000
+      #批量消费每次最多消费多少条消息（需要配置批量消费开关）
+      #max-poll-records: 50
+    #初始化生产者配置
+    producer:
+      #应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
+      acks: 1
+      #批量大小
+      batch-size: 16384
+      #生产端缓冲区大小
+      buffer-memory: 33554432
+      #重试次数
+      retries: 0
+      #提交延时
+      # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka
+      # linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
+      properties:
+        linger:
+          ms: 0
+      #Kafka提供的序列化和反序列化类
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      #消费端监听的topic不存在时，项目启动会报错(关掉)
+      missing-topics-fatal: false
+      #设置批量消费
+      #type: batch
+
+```
+
+
+
 ### 🍺Hello Kafka
+
+**搭建Kafka环境**
+
+使用docker搭建一个简答的单机环境
+
+```
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper
+    ports:
+      - 2182:2181
+    restart: always
+```
+
+
+
+
+
 **简单的生产者**
+
 ```java
 @RestController
 public class KafkaProducer {

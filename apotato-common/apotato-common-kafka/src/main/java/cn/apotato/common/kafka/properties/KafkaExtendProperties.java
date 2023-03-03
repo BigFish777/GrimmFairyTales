@@ -2,6 +2,8 @@ package cn.apotato.common.kafka.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "spring.kafka")
@@ -22,6 +24,8 @@ public class KafkaExtendProperties {
      * 副本数
      */
     private short replicationFactor = 1;
+
+    private List<String> bootstrapServers = new ArrayList<>(Collections.singletonList("localhost:9092"));
 
     public List<String> getTopics() {
         return topics;
@@ -45,5 +49,13 @@ public class KafkaExtendProperties {
 
     public void setReplicationFactor(short replicationFactor) {
         this.replicationFactor = replicationFactor;
+    }
+
+    public List<String> getBootstrapServers() {
+        return bootstrapServers;
+    }
+
+    public void setBootstrapServers(List<String> bootstrapServers) {
+        this.bootstrapServers = bootstrapServers;
     }
 }

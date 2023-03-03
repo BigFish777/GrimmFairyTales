@@ -11,9 +11,12 @@
 
     <artifactId>apotato-modules</artifactId>
     <packaging>pom</packaging>
-    <description>
-        业务模块
-    </description>
+    <description>业务模块</description>
+
+
+    <modules>
+        <module>apotato-modules-test</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

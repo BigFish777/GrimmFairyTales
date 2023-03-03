@@ -67,8 +67,9 @@ public class SpringUtils implements BeanFactoryPostProcessor {
      * @param obj      bean对象
      */
     public static void registerBean(String beanName, Object obj) {
-        Assert.isTrue(!beanFactory.containsBean(beanName), "beanName已存在！");
-        beanFactory.registerSingleton(beanName, obj);
+        if (!beanFactory.containsBean(beanName)) {
+            beanFactory.registerSingleton(beanName, obj);
+        }
     }
 
 }
