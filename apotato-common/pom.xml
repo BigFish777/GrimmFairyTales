@@ -14,6 +14,7 @@
     <modules>
         <module>apotato-common-core</module>
         <module>apotato-common-kafka</module>
+        <module>apotato-common-redis</module>
     </modules>
     <packaging>pom</packaging>
 
