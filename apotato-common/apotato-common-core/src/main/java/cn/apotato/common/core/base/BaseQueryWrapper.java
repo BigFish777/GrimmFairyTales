@@ -4,6 +4,7 @@ import cn.apotato.common.core.utils.UnderlineToCamelUtils;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,6 +50,9 @@ public class BaseQueryWrapper <T> {
             Class<?> fieldType = field.getType();
             // 如果字段上存在TableField注解，表明该字段被mybatis-plus管理并且是特殊的字段
             TableField annotation = field.getAnnotation(TableField.class);
+            // 获取数据库字段名称，默认使用字段名称（驼峰）转为下划线
+            // 例：userName -> user_name
+            String tableFieldValue = UnderlineToCamelUtils.camelToUnderline(fieldName);
             if (annotation != null) {
                 // exist = false  是否为数据库表字段 默认 true 存在，false 不存在
                 if (!annotation.exist()) {
@@ -56,14 +60,11 @@ public class BaseQueryWrapper <T> {
                         continue;
                     }
                 }
-                // 获取数据库字段名称，默认使用字段名称（驼峰）转为下划线
-                // 例：userName -> user_name
-                String tableFieldValue = UnderlineToCamelUtils.camelToUnderline(fieldName);
                 if (StringUtils.isNotBlank(tableFieldValue)) {
                     tableFieldValue = annotation.value();
                 }
-                setFieldQueryCriteria(queryWrapper, fieldType, tableFieldValue, value);
             }
+            setFieldQueryCriteria(queryWrapper, fieldType, tableFieldValue, value);
         }
         return queryWrapper;
     }
