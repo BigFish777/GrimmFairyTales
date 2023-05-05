@@ -1,29 +1,16 @@
-# 🥔一颗土豆极简开发框架（apotato-cloud）
-## 😀项目介绍
-本框架对常用的技术框架和业务进行了封装并提供了不错的自定义的钩子入口。可以实现搭积木一样的方式是开发属于你自己的程序。真的是轻松加愉快
+# 使用案例
 
-## 🔥项目目录（持续更新中...）
-**apotato-cloud**
-- [**apotato-common**](./apotato-common)
-  - [apotato-common-core](./apotato-common/apotato-common-core/README.md)
-  - [apotato-common-kafka](./apotato-common/apotato-common-kafka/README.md)
-  - [apotato-common-minio](./apotato-common/apotato-common-minio/README.md)
-  - [apotato-common-model](./apotato-common/apotato-common-model/README.md)
-  - [apotato-common-mybatisplus](./apotato-common/apotato-common-mybatisplus/README.md)
-  - [apotato-common-redis](./apotato-common/apotato-common-redis/README.md)
-
-- [**apotato-modules**](./apotato-modules)
-  - [apotato-modules-test](./apotato-modules/apotato-modules-test/README.md)
-
-
-## 📚使用案例
-#### 安装和引用
+## 安装和引用
 
 在maven中引入一下的依赖
 
 ```xml
 <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
     <apotato-common.version>1.0-SNAPSHOT</apotato-common.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <kafka.version>1.0-SNAPSHOT</kafka.version>
 </properties>
 
 <dependencies>
@@ -45,13 +32,13 @@
     <dependency>
         <groupId>cn.apotato</groupId>
         <artifactId>apotato-common-kafka</artifactId>
-        <version>${apotato-common.version}</version>
+        <version>${kafka.version}</version>
     </dependency>
     <!--  minio  -->
     <dependency>
         <groupId>cn.apotato</groupId>
         <artifactId>apotato-common-minio</artifactId>
-        <version>${apotato-common.version}</version>
+        <version>${kafka.version}</version>
     </dependency>
     <!--  mybatisplus  -->
     <dependency>
@@ -84,13 +71,30 @@
 
 
 
-#### 使用案例
-
-##### BaseController的使用
-
-**实体类**
-
+## 使用案例
+### BaseController的使用 
 ```java
+package cn.apotato.modules.test.entity;
+
+import cn.apotato.common.model.BaseModel;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
+import org.apache.ibatis.type.ArrayTypeHandler;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+
+/**
+ * 账户
+ * 账户的角色和菜单是分离的设计，角色的分配又前段控制。
+ * 账户本身就是一个角色，而角色作为业务需求使用
+ *
+ * @author xphu
+ * @date 2022/11/25
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -187,117 +191,32 @@ public class Account extends BaseModel {
 
 ```
 
-```java
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class AccountDTO extends Account {
-
-    /**
-     * 角色名字
-     */
-    private String orgName;
-}
 ```
+package cn.apotato.modules.test.controller;
 
-```java
-@Getter
-@Setter
-@Accessors(chain = true)
-@TableName(value = "organization", schema = "forest")
-public class Organization extends BaseModel {
+import cn.apotato.common.core.base.BaseController;
+import cn.apotato.modules.test.entity.Account;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-    /**
-     * 名称
-     */
-    @NotEmpty(message = "组织名称必填")
-    private String name;
-
-    /**
-     * 上级组织id
-     */
-    @NotNull(message = "上级组织必填")
-    private Long pid;
-
-    /**
-     * 联系人
-     */
-    private String personLiable;
-
-    /**
-     * 联系方式
-     */
-    private String contactInformation;
-
-}
-
-```
-
-**mapper 需要实现MPJBaseMapper**
-```java
-@Mapper
-public interface AccountMapper extends MPJBaseMapper<Account> {
-}
-```
-
-```java
-@Mapper
-public interface OrganizationMapper extends MPJBaseMapper<Organization> {
-}
-```
-
-```java
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * BaseController和MPJBaseMapper测试
+ * 帐户控制器
  *
  * @author 胡晓鹏
  * @date 2023/04/21
  */
+@AllArgsConstructor
 @RequestMapping("account")
 @RestController
 public class AccountController extends BaseController<Account, Long> {
-
-    @Resource
-    private MPJBaseMapper<Account> mapper;
-
-    public AccountController(IService<Account> service, MPJBaseMapper<Account> mapper) {
-        super(service, mapper);
-    }
-
-    /**
-     * 级联查询 MPJQueryWrapper
-     * <a href="https://mybatisplusjoin.com/pages/core/lambda/select/select.html">MPJQueryWrapper文档</a>
-     * ==> SELECT t.* o.NAME AS org_name FROM account t LEFT JOIN organization o ON o.id = t.org_id WHERE t.id = ?;
-     * @param accountId 帐户id
-     * @return {@link List}<{@link Map}<{@link String}, {@link Object}>>
-     */
-    @GetMapping("join")
-    public List<Map<String, Object>> getAccountInfo(Long accountId) {
-        return mapper.selectJoinMaps(new MPJQueryWrapper<Account>().selectAll(Account.class)
-                .select("o.name as org_name")
-                .leftJoin("forest.organization o on o.id = t.org_id")
-                .eq(accountId != null,"t.id", accountId)
-        );
-    }
-
-    /**
-     * 级联查询 MPJLambdaWrapper的简单使用
-     * <a href="https://mybatisplusjoin.com/pages/core/str/select.html">MPJLambdaWrapper文档</a>
-     * ==> SELECT t.* o.NAME AS org_name FROM account t LEFT JOIN organization o ON o.id = t.org_id WHERE t.id = ?;
-     * @param accountId 帐户id
-     * @return {@link List}<{@link AccountDTO}>
-     */
-    @GetMapping("join-lamda")
-    public List<AccountDTO> getAccountInfoLamda(Long accountId) {
-        return JoinWrappers.lambda(Account.class)
-                .selectAsClass(Account.class, AccountDTO.class)
-                .selectAs(Organization::getName, AccountDTO::getOrgName)
-                .leftJoin(Organization.class, Organization::getId, Account::getOrgId)
-                .eq(accountId != null,"t.id", accountId)
-                .list(AccountDTO.class);
-    }
-
-
 
     // todo 三种不通颗粒度的查询过滤的钩子函数
     /**
@@ -375,14 +294,13 @@ public class AccountController extends BaseController<Account, Long> {
     }
 
 }
-
 ```
 
 
 
-##### kafka的使用
+### kafka的使用
 
-###### 配置
+#### 配置
 
 ```yaml
  spring:
@@ -455,7 +373,7 @@ public class AccountController extends BaseController<Account, Long> {
 
 
 
-###### 生产者和消费者
+#### 生产者和消费者
 
 ```java
 /**
@@ -507,9 +425,9 @@ public class KafkaController {
 
 
 
-##### Redis的使用
+### Redis的使用
 
-###### 配置
+#### 配置
 
 ```yaml
 spring:
@@ -538,9 +456,26 @@ spring:
 
 
 
-###### 使用
+#### 使用
 
 ````java
+package cn.apotato.modules.test.controller;
+
+import cn.apotato.common.redis.service.RedisService;
+import cn.hutool.core.lang.Dict;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 复述,控制器
+ *
+ * @author 胡晓鹏
+ * @date 2023/05/04
+ */
 @AllArgsConstructor
 @RestController
 public class RedisController {
@@ -572,9 +507,9 @@ public class RedisController {
 
 
 
-##### Minio的使用
+### Minio的使用
 
-###### 配置
+#### 配置
 
 ```yaml
 # minio
@@ -591,9 +526,27 @@ minio:
 
 
 
-###### 使用
+#### 使用
 
 ````java
+package cn.apotato.modules.test.controller;
+
+import cn.apotato.common.minio.MinioTemplate;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * minio控制器
+ *
+ * @author 胡晓鹏
+ * @date 2023/05/04
+ */
 @AllArgsConstructor
 @RequestMapping("minio")
 @RestController

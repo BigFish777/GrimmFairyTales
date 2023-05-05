@@ -2,6 +2,7 @@ package cn.apotato.modules.test.mapper;
 
 import cn.apotato.modules.test.entity.Account;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,5 +12,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2023/04/21
  */
 @Mapper
-public interface AccountMapper extends BaseMapper<Account> {
+public interface AccountMapper extends MPJBaseMapper<Account> {
 }

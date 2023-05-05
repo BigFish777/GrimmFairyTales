@@ -1,2 +1,3 @@
 cn.apotato.common.core.utils.SpringUtils
 cn.apotato.common.core.response.GlobalResponseBodyAdvice
+cn.apotato.common.core.exception.GlobalExceptionHandling

@@ -20,28 +20,19 @@
     </properties>
 
     <dependencies>
+        <!--  model  -->
         <dependency>
             <groupId>cn.apotato</groupId>
             <artifactId>apotato-common-model</artifactId>
             <version>${apotato-common.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--  redis  -->
         <dependency>
             <groupId>cn.apotato</groupId>
             <artifactId>apotato-common-redis</artifactId>
             <version>${apotato-common.version}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.apotato</groupId>
-            <artifactId>apotato-common-mybatisplus</artifactId>
-            <version>${apotato-common.version}</version>
-        </dependency>
-
-        <!-- SpringBoot Web -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!--  kafka  -->
         <dependency>
@@ -49,21 +40,37 @@
             <artifactId>apotato-common-kafka</artifactId>
             <version>${kafka.version}</version>
         </dependency>
+        <!--  minio  -->
+        <dependency>
+            <groupId>cn.apotato</groupId>
+            <artifactId>apotato-common-minio</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <!--  mybatisplus  -->
+        <dependency>
+            <groupId>cn.apotato</groupId>
+            <artifactId>apotato-common-mybatisplus</artifactId>
+            <version>${apotato-common.version}</version>
+        </dependency>
+        <!-- SpringBoot Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- hutool -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
-
+        <!--  postgresql  -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
-
     </dependencies>
 </project>

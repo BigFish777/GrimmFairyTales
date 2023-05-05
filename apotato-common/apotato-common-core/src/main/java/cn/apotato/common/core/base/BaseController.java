@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.yulichang.base.MPJBaseMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +22,15 @@ import java.util.List;
 @Slf4j
 public class BaseController<T, ID> {
 
-    @Autowired
-    protected IService<T> service;
+    protected final IService<T> service;
+
+    protected final MPJBaseMapper<T> mapper;
+
+    public BaseController(IService<T> service, MPJBaseMapper<T> mapper) {
+        this.service = service;
+        this.mapper = mapper;
+    }
+
 
     @PostMapping
     public T create(@RequestBody T entity) {

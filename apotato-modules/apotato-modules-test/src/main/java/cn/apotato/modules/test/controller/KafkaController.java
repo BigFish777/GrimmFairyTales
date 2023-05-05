@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * kafka生产者和消费的使用
+ *
+ * @author 胡晓鹏
+ * @date 2023/05/04
+ */
 @Slf4j
 @RequestMapping("kafka")
 @RestController
@@ -36,7 +42,11 @@ public class KafkaController {
         return msg;
     }
 
-    // 消费监听
+    /**
+     * 消费消息
+     *
+     * @param record 记录
+     */
     @KafkaListener(topics = {"test1"})
     public void onMessage1(ConsumerRecord<?, ?> record){
         // 消费的哪个topic、partition的消息,打印出消息内容

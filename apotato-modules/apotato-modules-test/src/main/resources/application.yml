@@ -2,6 +2,8 @@ server:
   port: 8081
   servlet:
     context-path: /
+  tomcat:
+    basedir: ./temp
 spring:
   application:
     name: modules-test
@@ -105,6 +107,8 @@ spring:
         min-idle: 1
     # 连接超时时间（毫秒）
     timeout: 5000
+
+#mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   #  type-enums-package: org.fatewa.enums
@@ -123,4 +127,15 @@ mybatis-plus:
     call-setters-on-nulls: true
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# minio
+minio:
+  #minio服务地址
+  endpoint: ${MINIO_URL:http://10.4.5.161:9000}
+  #账户
+  accessKey: ${MINIO_ACCESS_KEY:AKIAIOSFODNN7EXAMPLE}
+  #密码
+  secretKey: ${MINIO_SECRET_KEY:wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY}
+  #桶名称
+  bucketName: ${MINIO_BUCKET_NAME:test}
 
