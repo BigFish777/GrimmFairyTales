@@ -1,0 +1,4 @@
+cn.apotato.modules.minio.config.MinioConfig
+cn.apotato.modules.minio.MinioTemplate
+cn.apotato.modules.minio.config.MultipartConfig
+cn.apotato.modules.minio.BucketInit

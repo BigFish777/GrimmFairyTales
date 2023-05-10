@@ -1,0 +1,2 @@
+cn.apotato.modules.mybatis.plus.config.MybatisPlusConfig
+cn.apotato.modules.mybatis.plus.handler.MyMetaObjectHandler
