@@ -1,0 +1,31 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: modules-test
+  jackson:
+    # 常用，全局设置pojo或被@JsonInclude注解的属性的序列化方式
+    default-property-inclusion: NON_NULL #不为空的属性才会序列化,具体属性可看JsonInclude.Include
+    date-format: yyyy-MM-dd HH:mm:ss
+    locale: en_CH
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: gitea
+    url: jdbc:mysql://${DB_HOST:apotato.cn}:${DB_PORT:33060}/${DB_NAME:jpa_test}?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+  jpa:
+    hibernate:
+      # 第一次加载 Hibernate 时根据 model 类会自动建立起表的结构（前提是先建立好数据库），以后加载 Hibernate 时根据 model 类自动更新表结构，即使表结构改变了，但表中的行仍然存在，不会删除以前的行。要注意的是当部署到服务器后，表结构是不会被马上建立起来的，是要等应用第一次运行起来后才会。
+      ddl-auto: update
+    show-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
